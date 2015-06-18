@@ -12,7 +12,7 @@
 
 Name:           python-%{pypi_name}
 Version:        1.10.2.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        jQuery 1.10.2 (XStatic packaging standard)
 
 License:        MIT
@@ -60,5 +60,8 @@ rm -rf %{pypi_name}.egg-info
 %{python_sitelib}/xstatic/pkg/jquery
 
 %changelog
+* Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.10.2.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Wed Mar 12 2014 Matthias Runge <mrunge@redhat.com> - 1.10.2.1-1
 - Initial package.
