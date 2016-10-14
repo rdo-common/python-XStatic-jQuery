@@ -1,65 +1,117 @@
-%if 0%{?fedora} > 12 || 0%{?rhel} >= 8
+%if 0%{?fedora}
 %global with_python3 1
 %endif
-
-%{!?__python2:%global __python2 %{__python}}
-%{!?python2_sitelib:   %global python2_sitelib         %{python_sitelib}}
-%{!?python2_sitearch:  %global python2_sitearch        %{python_sitearch}}
-%{!?python2_version:   %global python2_version         %{python_version}}
-
 
 %global pypi_name XStatic-jQuery
 
 Name:           python-%{pypi_name}
 Version:        1.10.2.1
-Release:        4%{?dist}
-Summary:        jQuery 1.10.2 (XStatic packaging standard)
+Release:        5%{?dist}
+Summary:        jQuery (XStatic packaging standard)
 
 License:        MIT
 URL:            http://jquery.com/
-Source0:        https://pypi.python.org/packages/source/X/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
+Source0:        https://files.pythonhosted.org/packages/source/X/%{pypi_name}/%{pypi_name}-%{version}.tar.gz
 BuildArch:      noarch
- 
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools
-Requires:       python-XStatic
 
+BuildRequires: web-assets-devel
 
 %description
-jQuery javascript library packaged for
-setuptools (easy_install) / pip.
+JavaScript library packaged for setuptools (easy_install) / pip.
 
-This package is intended to be used by
-**any** project that needs these files.
+This package is intended to be used by any project that needs these files.
 
-It intentionally does **not** provide
-any extra code except some metadata
-**nor** has any extra requirements. You MAY
-use some minimal support code from
-the XStatic base package, if you like.
+It intentionally does not provide any extra code except some metadata
+nor has any extra requirements.
+
+%package -n python2-%{pypi_name}
+Summary:        %{summary}
+
+BuildRequires:  python2-devel
+BuildRequires:  python2-setuptools
+
+Requires:       python2-XStatic
+Requires:       js-jquery1
+
+%{?python_provide:%python_provide python2-%{pypi_name}}
+
+%description -n python2-%{pypi_name}
+JavaScript library packaged for setuptools (easy_install) / pip.
+
+This package is intended to be used by any project that needs these files.
+
+It intentionally does not provide any extra code except some metadata
+nor has any extra requirements.
+
+This package provides Python 2 build of %{pypi_name}.
+
+%if 0%{?with_python3}
+%package -n python3-%{pypi_name}
+Summary:        %{summary}
+
+BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
+
+Requires:       python3-XStatic
+Requires:       js-jquery1
+
+%{?python_provide:%python_provide python3-%{pypi_name}}
+
+%description -n python3-%{pypi_name}
+JavaScript library packaged for setuptools (easy_install) / pip.
+
+This package is intended to be used by any project that needs these files.
+
+It intentionally does not provide any extra code except some metadata
+nor has any extra requirements.
+
+This package provides Python 3 build of %{pypi_name}.
+%endif
+
 
 %prep
-%setup -q -n %{pypi_name}-%{version}
-# Remove bundled egg-info
-rm -rf %{pypi_name}.egg-info
-
-
+%autosetup -n %{pypi_name}-%{version}
+# patch to use webassets dir
+sed -i "s|^BASE_DIR = .*|BASE_DIR = '%{_jsdir}/jquery/1'|" xstatic/pkg/jquery/__init__.py
 
 %build
-%{__python} setup.py build
-
+%py2_build
+%if 0%{?with_python3}
+%py3_build
+%endif
 
 %install
-%{__python} setup.py install --skip-build --root %{buildroot}
+%py2_install
+
+rm -rf %{buildroot}%{python2_sitelib}/xstatic/pkg/jquery/data/
 
 
-%files
+%if 0%{?with_python3}
+%py3_install
+# Remove static files, already created by the python2 subpkg
+rm -rf %{buildroot}%{python3_sitelib}/xstatic/pkg/jquery/data
+%endif
+
+%files -n python2-%{pypi_name}
 %doc README.txt
-%{python_sitelib}/XStatic_jQuery-%{version}-py?.?.egg-info
-%{python_sitelib}/XStatic_jQuery-%{version}-py?.?-nspkg.pth
-%{python_sitelib}/xstatic/pkg/jquery
+%{python2_sitelib}/xstatic/pkg/jquery
+%{python2_sitelib}/XStatic_jQuery-%{version}-py%{python2_version}.egg-info
+%{python2_sitelib}/XStatic_jQuery-%{version}-py%{python2_version}-nspkg.pth
+
+%if 0%{?with_python3}
+%files -n python3-%{pypi_name}
+%doc README.txt
+%{python3_sitelib}/xstatic/pkg/jquery
+%{python3_sitelib}/XStatic_jQuery-%{version}-py%{python3_version}.egg-info
+%{python3_sitelib}/XStatic_jQuery-%{version}-py%{python3_version}-nspkg.pth
+%endif
+
 
 %changelog
+* Thu Oct 13 2016 Jan Beran <jberan@redhat.com> - 1.10.2.1-5
+- Provides a Python 3 subpackage
+- depend on js-jquery1 rather than bundling its own
+
 * Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.10.2.1-4
 - https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
 
