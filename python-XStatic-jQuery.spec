@@ -6,7 +6,7 @@
 
 Name:           python-%{pypi_name}
 Version:        1.10.2.1
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        jQuery (XStatic packaging standard)
 
 License:        MIT
@@ -108,6 +108,9 @@ rm -rf %{buildroot}%{python3_sitelib}/xstatic/pkg/jquery/data
 
 
 %changelog
+* Mon Dec 19 2016 Miro Hrončok <mhroncok@redhat.com> - 1.10.2.1-6
+- Rebuild for Python 3.6
+
 * Thu Oct 13 2016 Jan Beran <jberan@redhat.com> - 1.10.2.1-5
 - Provides a Python 3 subpackage
 - depend on js-jquery1 rather than bundling its own
