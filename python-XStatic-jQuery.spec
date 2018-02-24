@@ -6,7 +6,7 @@
 
 Name:           python-%{pypi_name}
 Version:        1.10.2.1
-Release:        9%{?dist}
+Release:        9%{?dist}.2
 Summary:        jQuery (XStatic packaging standard)
 
 License:        MIT
@@ -31,7 +31,7 @@ BuildRequires:  python2-devel
 BuildRequires:  python2-setuptools
 
 Requires:       python2-XStatic
-Requires:       js-jquery1
+#Requires:       js-jquery1
 
 %{?python_provide:%python_provide python2-%{pypi_name}}
 
@@ -53,7 +53,7 @@ BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
 
 Requires:       python3-XStatic
-Requires:       js-jquery1
+#Requires:       js-jquery1
 
 %{?python_provide:%python_provide python3-%{pypi_name}}
 
@@ -72,7 +72,7 @@ This package provides Python 3 build of %{pypi_name}.
 %prep
 %autosetup -n %{pypi_name}-%{version}
 # patch to use webassets dir
-sed -i "s|^BASE_DIR = .*|BASE_DIR = '%{_jsdir}/jquery/1'|" xstatic/pkg/jquery/__init__.py
+#sed -i "s|^BASE_DIR = .*|BASE_DIR = '%{_jsdir}/jquery/1'|" xstatic/pkg/jquery/__init__.py
 
 %build
 %py2_build
@@ -83,13 +83,13 @@ sed -i "s|^BASE_DIR = .*|BASE_DIR = '%{_jsdir}/jquery/1'|" xstatic/pkg/jquery/__
 %install
 %py2_install
 
-rm -rf %{buildroot}%{python2_sitelib}/xstatic/pkg/jquery/data/
+#rm -rf %{buildroot}%{python2_sitelib}/xstatic/pkg/jquery/data/
 
 
 %if 0%{?with_python3}
 %py3_install
 # Remove static files, already created by the python2 subpkg
-rm -rf %{buildroot}%{python3_sitelib}/xstatic/pkg/jquery/data
+#rm -rf %{buildroot}%{python3_sitelib}/xstatic/pkg/jquery/data
 %endif
 
 %files -n python2-%{pypi_name}
